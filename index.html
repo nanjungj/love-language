@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fbf7f2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1b1714" media="(prefers-color-scheme: dark)">
+<title>나의 사랑의 언어 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbf7f2;
+    --surface: #ffffff;
+    --ink: #2a2420;
+    --ink-soft: #6b5f55;
+    --line: #e6ddd2;
+    --track: #ece4da;
+    --btn-bg: #2a2420;
+    --btn-ink: #fbf7f2;
+    --sel: #2a2420;
+    --sel-bg: #f3ece3;
+    --focus: #c08a0c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1b1714;
+      --surface: #25201c;
+      --ink: #f1e9df;
+      --ink-soft: #b3a698;
+      --line: #3a332d;
+      --track: #3a332d;
+      --btn-bg: #f1e9df;
+      --btn-ink: #1b1714;
+      --sel: #f1e9df;
+      --sel-bg: #332c26;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Noto Sans KR", system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap {
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 24px 20px calc(32px + env(safe-area-inset-bottom));
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  [hidden] { display: none !important; }
+  h1, h2 {
+    font-family: "Gowun Batang", serif;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    word-break: keep-all;
+  }
+  p { word-break: keep-all; }
+  button { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* ---------- 시작 화면 ---------- */
+  .hero { width: 100%; height: auto; display: block; margin: 8px auto 4px; animation: rise .6s ease-out both; }
+  #start h1 { font-size: 30px; text-align: center; margin: 4px 0 14px; }
+  .lead { color: var(--ink-soft); font-size: 16px; text-align: center; margin: 0 0 18px; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin: 0 0 26px; padding: 0; list-style: none; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 14px; font-weight: 500;
+    padding: 5px 12px 5px 9px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--surface);
+  }
+  .chip i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex: none; }
+  label.field { display: block; font-size: 14px; font-weight: 500; color: var(--ink-soft); margin-bottom: 6px; }
+  input[type=text] {
+    width: 100%; min-height: 48px;
+    font: inherit; font-size: 16px; color: var(--ink);
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--line); border-radius: 12px;
+    -webkit-appearance: none; appearance: none;
+  }
+  input[type=text]::placeholder { color: var(--ink-soft); opacity: .7; }
+  .btn {
+    display: block; width: 100%; min-height: 54px;
+    border: 0; border-radius: 14px; cursor: pointer;
+    font-size: 17px; font-weight: 700;
+    background: var(--btn-bg); color: var(--btn-ink);
+    margin-top: 14px;
+    transition: transform .1s ease, opacity .15s ease;
+  }
+  .btn:active { transform: scale(.985); }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+  .btn[disabled] { opacity: .55; cursor: default; }
+  .privacy { font-size: 13px; color: var(--ink-soft); text-align: center; margin: 22px 0 0; }
+
+  /* ---------- 문항 화면 ---------- */
+  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; }
+  .back {
+    width: 44px; height: 44px; flex: none;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--surface);
+    font-size: 26px; line-height: 1; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; padding-bottom: 3px;
+  }
+  .bar { flex: 1; height: 8px; background: var(--track); border-radius: 99px; overflow: hidden; }
+  .bar > span { display: block; height: 100%; width: 0; background: var(--ink); border-radius: 99px; transition: width .25s ease; }
+  .count { font-size: 14px; font-weight: 500; color: var(--ink-soft); min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; }
+  #quiz h2 { font-size: 23px; text-align: center; margin: 0 0 22px; }
+  .options { animation: fade .25s ease-out both; }
+  .opt {
+    display: flex; align-items: center; gap: 14px;
+    width: 100%; min-height: 108px;
+    padding: 20px 18px; text-align: left;
+    background: var(--surface);
+    border: 1.5px solid var(--line); border-radius: 18px;
+    font-size: 17px; font-weight: 500; line-height: 1.55; word-break: keep-all;
+    cursor: pointer;
+    transition: border-color .15s ease, background-color .15s ease, transform .1s ease;
+  }
+  .opt:active { transform: scale(.99); }
+  .opt .dot {
+    width: 22px; height: 22px; flex: none; border-radius: 50%;
+    border: 2px solid var(--line); position: relative;
+    transition: border-color .15s ease;
+  }
+  .opt.selected { border-color: var(--sel); background: var(--sel-bg); }
+  .opt.selected .dot { border-color: var(--sel); }
+  .opt.selected .dot::after {
+    content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--sel);
+  }
+  .or {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--ink-soft); font-size: 14px; margin: 12px 0;
+  }
+  .or::before, .or::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  /* ---------- 결과 화면 ---------- */
+  #result h2 { font-size: 24px; text-align: center; margin: 4px 0 16px; }
+  .preview {
+    display: block; width: 100%; height: auto; aspect-ratio: 1080 / 1350;
+    border-radius: 16px; border: 1px solid var(--line); background: var(--surface);
+    -webkit-touch-callout: default; user-select: auto;
+  }
+  .hint {
+    font-size: 14px; color: var(--ink-soft); text-align: center;
+    margin: 14px 0 0; padding: 10px 12px; border-radius: 12px;
+    transition: background-color .2s ease, color .2s ease;
+  }
+  .hint.strong { background: #fdf0d5; color: #6b4a00; font-weight: 700; }
+  @media (prefers-color-scheme: dark) { .hint.strong { background: #3d3115; color: #f5d98f; } }
+  .loading { text-align: center; color: var(--ink-soft); padding: 80px 0; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <!-- 1. 시작 화면 -->
+  <section id="start" aria-labelledby="t-start">
+    <svg class="hero" id="hero" viewBox="0 0 420 230" role="img" aria-label="다섯 가지 사랑의 언어 카드가 부채꼴로 펼쳐진 그림"></svg>
+    <h1 id="t-start">나의 사랑의 언어 찾기</h1>
+    <p class="lead">사람마다 마음이 전해진다고 느끼는 방식이 달라요. 두 문장 중 나에게 더 와닿는 쪽을 고르면 됩니다. 정답은 없어요. 20문항, 3분이면 끝나요.</p>
+    <ul class="chips" id="chips"></ul>
+    <label class="field" for="name">이름 또는 별칭 (선택)</label>
+    <input type="text" id="name" maxlength="12" autocomplete="off" placeholder="결과 이미지에 들어가요">
+    <button class="btn" id="startBtn" type="button">진단 시작하기</button>
+    <p class="privacy">응답은 어디에도 저장·전송되지 않고, 내 휴대폰 안에서만 계산돼요.</p>
+  </section>
+
+  <!-- 2. 문항 화면 -->
+  <section id="quiz" hidden aria-labelledby="t-quiz">
+    <div class="topbar">
+      <button class="back" id="backBtn" type="button" aria-label="이전">‹</button>
+      <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="20" id="bar"><span id="barFill"></span></div>
+      <span class="count" id="count">1 / 20</span>
+    </div>
+    <h2 id="t-quiz">어느 쪽에서 마음이 더 전해지나요?</h2>
+    <div class="options" id="options">
+      <button class="opt" type="button" id="opt0"><span class="dot" aria-hidden="true"></span><span class="txt"></span></button>
+      <div class="or" aria-hidden="true">또는</div>
+      <button class="opt" type="button" id="opt1"><span class="dot" aria-hidden="true"></span><span class="txt"></span></button>
+    </div>
+  </section>
+
+  <!-- 3. 결과 화면 -->
+  <section id="result" hidden aria-labelledby="t-result">
+    <h2 id="t-result">진단 결과</h2>
+    <div class="loading" id="loading">결과 이미지를 만들고 있어요…</div>
+    <img class="preview" id="preview" alt="" hidden>
+    <button class="btn" id="saveBtn" type="button" disabled>결과 이미지(PNG) 저장하기</button>
+    <button class="btn ghost" id="retryBtn" type="button">다시 하기</button>
+    <p class="hint" id="hint">저장 버튼이 안 되면 이미지를 길게 눌러 '사진에 저장'을 선택하세요.</p>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ================= 데이터 ================= */
+  var ORDER = ['W', 'T', 'G', 'S', 'P'];
+  var LANGS = {
+    W: { name: '인정하는 말', en: 'Words of Affirmation', color: '#e4573d',
+         desc: '진심이 담긴 말 한마디에 힘이 나는 사람이에요.',
+         tip: '구체적으로 칭찬하고, 고마움을 말로 꼭 표현해 주세요.' },
+    T: { name: '함께하는 시간', en: 'Quality Time', color: '#16707f',
+         desc: '온전히 함께하는 시간에서 마음을 느끼는 사람이에요.',
+         tip: '휴대폰을 내려놓고 눈을 맞추며 이야기를 들어 주세요.' },
+    G: { name: '선물', en: 'Receiving Gifts', color: '#c08a0c',
+         desc: '나를 떠올린 작은 마음의 표시가 오래 남는 사람이에요.',
+         tip: "가격보다 '네 생각이 났어'라는 마음을 담아 건네 주세요." },
+    S: { name: '봉사', en: 'Acts of Service', color: '#2d4e8a',
+         desc: '말보다 행동으로 도와줄 때 사랑을 느끼는 사람이에요.',
+         tip: '필요한 일을 먼저 알아채고 손을 보태 주세요.' },
+    P: { name: '스킨십', en: 'Physical Touch', color: '#c93f78',
+         desc: '따뜻한 접촉에서 안정감과 친밀함을 느끼는 사람이에요.',
+         tip: '상황에 맞는 하이파이브, 악수, 토닥임으로 마음을 전해 주세요.' }
+  };
+
+  var BANK = {
+    W: ['수고했다는 말을 구체적으로 들을 때', '누군가 나를 칭찬했다는 이야기를 전해 들을 때', "'당신 덕분이에요'라는 말을 들을 때", '응원 메시지나 손편지를 받을 때',
+        '내 노력을 사람들 앞에서 인정받을 때', "'믿고 있어요'라는 말을 들을 때", "내 의견에 '좋은 생각이에요'라는 반응을 들을 때", '힘든 날 따뜻한 격려의 말을 들을 때'],
+    T: ['상대가 휴대폰을 내려놓고 내 이야기에 집중할 때', '둘이 산책하며 천천히 이야기 나눌 때', '바쁜 와중에도 나와 보낼 시간을 따로 내줄 때', '함께 밥을 먹으며 서로의 근황을 나눌 때',
+        '운동이나 취미 같은 활동을 함께할 때', '고민을 끝까지 들어주며 곁에 있어 줄 때', '나와의 약속 시간을 소중하게 지켜줄 때', '특별한 일 없이도 함께 시간을 보낼 때'],
+    G: ['여행지에서 나를 생각하며 산 기념품을 받을 때', '내가 좋아하는 간식을 기억해 챙겨줄 때', '기념일에 마음이 담긴 선물을 받을 때', "'이거 보고 네 생각났어' 하며 무언가를 건넬 때",
+        '예상하지 못한 깜짝 선물을 받을 때', '직접 만든 무언가를 선물 받을 때', '힘든 날 커피 한 잔을 건네받을 때', '오래 간직할 수 있는 물건을 받을 때'],
+    S: ['바쁠 때 내 일을 말없이 거들어 줄 때', '부탁하지 않았는데 필요한 것을 먼저 챙겨줄 때', '미뤄 둔 귀찮은 일을 대신 처리해 줄 때', '아플 때 필요한 것을 사다 주고 챙겨줄 때',
+        '마감에 쫓길 때 실질적으로 도와줄 때', '무거운 짐을 함께 들어줄 때', '내 일정에 맞춰 미리 준비해 둘 때', '말보다 행동으로 약속을 지켜줄 때'],
+    P: ['반갑게 하이파이브나 악수를 나눌 때', '힘들 때 어깨를 토닥여 줄 때', '오랜만에 만나 따뜻하게 안아줄 때', '나란히 가까이 앉아 있을 때',
+        '축하하며 손을 꼭 잡아줄 때', '위로가 필요할 때 등을 쓸어줄 때', '팔짱을 끼거나 가볍게 어깨동무할 때', '기쁜 순간에 함께 껴안고 기뻐할 때']
+  };
+
+  var PAIRS = ['WT', 'GS', 'TP', 'WG', 'SP', 'TG', 'WS', 'GP', 'TS', 'WP',
+               'SW', 'PG', 'TW', 'SG', 'PT', 'GW', 'PS', 'GT', 'ST', 'PW'];
+
+  /* ---------- 문항 조건 검증 ---------- */
+  (function validate() {
+    console.assert(PAIRS.length === 20, '문항 수는 20개여야 합니다.');
+    var combo = {}, appear = {};
+    PAIRS.forEach(function (p) {
+      console.assert(p.length === 2 && p[0] !== p[1] && LANGS[p[0]] && LANGS[p[1]], '잘못된 짝: ' + p);
+      var k = p.split('').sort().join('');
+      combo[k] = (combo[k] || 0) + 1;
+      appear[p[0]] = (appear[p[0]] || 0) + 1;
+      appear[p[1]] = (appear[p[1]] || 0) + 1;
+    });
+    console.assert(Object.keys(combo).length === 10, '10개 조합이 모두 나와야 합니다.', combo);
+    Object.keys(combo).forEach(function (k) {
+      console.assert(combo[k] === 2, '조합 ' + k + '는 정확히 2번 나와야 합니다. (현재 ' + combo[k] + ')');
+    });
+    ORDER.forEach(function (L) {
+      console.assert(appear[L] === 8, L + '는 8번 등장해야 합니다. (현재 ' + appear[L] + ')');
+      console.assert(BANK[L].length === 8, L + ' 문장 은행은 8개여야 합니다.');
+    });
+  })();
+
+  /* ---------- 문항 생성 ---------- */
+  var QUESTIONS = (function () {
+    var used = { W: 0, T: 0, G: 0, S: 0, P: 0 };
+    return PAIRS.map(function (p, i) {
+      var a = { lang: p[0], text: BANK[p[0]][used[p[0]]++] };
+      var b = { lang: p[1], text: BANK[p[1]][used[p[1]]++] };
+      // 홀수 번째(0부터 1,3,5…) 문항은 위아래 위치를 바꿔 보여 준다
+      return { shown: (i % 2 === 1) ? [b, a] : [a, b] };
+    });
+  })();
+
+  /* ================= 상태 ================= */
+  var state = { name: '', idx: 0, answers: new Array(20).fill(null), locked: false };
+  var resultBlob = null, resultFileName = '';
+
+  var $ = function (id) { return document.getElementById(id); };
+  var screens = { start: $('start'), quiz: $('quiz'), result: $('result') };
+  function show(key) {
+    Object.keys(screens).forEach(function (k) { screens[k].hidden = (k !== key); });
+    window.scrollTo(0, 0);
+  }
+
+  /* ================= 시작 화면 ================= */
+  function buildHero() {
+    var svg = $('hero');
+    var NS = 'http://www.w3.org/2000/svg';
+    var angles = [-36, -18, 0, 18, 36];
+    var lines = { W: ['인정하는', '말'], T: ['함께하는', '시간'], G: ['선물'], S: ['봉사'], P: ['스킨십'] };
+    var html = '';
+    // 바깥 카드부터 그려 가운데 카드가 맨 위에 오게 한다
+    [0, 4, 1, 3, 2].forEach(function (i) {
+      var L = ORDER[i];
+      var c = LANGS[L].color;
+      var t = lines[L];
+      var y0 = t.length === 1 ? -212 : -220;
+      var tx = i < 2 ? -6 : (i > 2 ? 6 : 0); // 겹치는 쪽에서 글자를 살짝 비켜 둔다
+      var tsp = t.map(function (s, j) {
+        return '<tspan x="' + tx + '" y="' + (y0 + j * 17) + '">' + s + '</tspan>';
+      }).join('');
+      html +=
+        '<g transform="translate(210 320) rotate(' + angles[i] + ')">' +
+          '<rect x="-38" y="-290" width="76" height="128" rx="7" fill="' + c + '"/>' +
+          '<polyline points="-38,-286 0,-252 38,-286" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.6" stroke-linejoin="round"/>' +
+          '<circle cx="0" cy="-252" r="4.5" fill="#fff" fill-opacity=".85"/>' +
+          '<text text-anchor="middle" fill="#fff" font-size="13.5" font-weight="700" ' +
+            'font-family="Noto Sans KR, sans-serif">' + tsp + '</text>' +
+        '</g>';
+    });
+    svg.setAttribute('xmlns', NS);
+    svg.innerHTML = html;
+  }
+
+  function buildChips() {
+    $('chips').innerHTML = ORDER.map(function (L) {
+      return '<li class="chip"><i style="background:' + LANGS[L].color + '"></i>' + LANGS[L].name + '</li>';
+    }).join('');
+  }
+
+  $('startBtn').addEventListener('click', function () {
+    state.name = $('name').value.trim().slice(0, 12);
+    state.idx = 0;
+    state.answers = new Array(20).fill(null);
+    state.locked = false;
+    renderQuestion();
+    show('quiz');
+  });
+  $('name').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); $('startBtn').click(); }
+  });
+
+  /* ================= 문항 화면 ================= */
+  var optBtns = [$('opt0'), $('opt1')];
+
+  function renderQuestion() {
+    var q = QUESTIONS[state.idx];
+    var chosen = state.answers[state.idx];
+    optBtns.forEach(function (btn, k) {
+      btn.querySelector('.txt').textContent = q.shown[k].text;
+      var sel = chosen === q.shown[k].lang;
+      btn.classList.toggle('selected', sel);
+      btn.setAttribute('aria-pressed', sel ? 'true' : 'false');
+    });
+    var n = state.idx + 1;
+    $('count').textContent = n + ' / 20';
+    $('barFill').style.width = (n / 20 * 100) + '%';
+    $('bar').setAttribute('aria-valuenow', String(n));
+    // 전환 애니메이션 재생
+    var box = $('options');
+    box.style.animation = 'none';
+    void box.offsetWidth;
+    box.style.animation = '';
+  }
+
+  optBtns.forEach(function (btn, k) {
+    btn.addEventListener('click', function () {
+      if (state.locked) return;
+      state.locked = true;
+      var q = QUESTIONS[state.idx];
+      state.answers[state.idx] = q.shown[k].lang;
+      optBtns.forEach(function (b, j) {
+        b.classList.toggle('selected', j === k);
+        b.setAttribute('aria-pressed', j === k ? 'true' : 'false');
+      });
+      setTimeout(function () {
+        state.locked = false;
+        if (state.idx < QUESTIONS.length - 1) {
+          state.idx++;
+          renderQuestion();
+          optBtns.forEach(function (b) { b.blur(); });
+        } else {
+          finish();
+        }
+      }, 180);
+    });
+  });
+
+  $('backBtn').addEventListener('click', function () {
+    if (state.locked) return;
+    if (state.idx === 0) { show('start'); return; }
+    state.idx--;
+    renderQuestion();
+  });
+
+  /* ================= 채점 ================= */
+  function score() {
+    var s = { W: 0, T: 0, G: 0, S: 0, P: 0 };
+    state.answers.forEach(function (L) { if (L) s[L]++; });
+    var max = Math.max.apply(null, ORDER.map(function (L) { return s[L]; }));
+    var top = ORDER.filter(function (L) { return s[L] === max; });
+    return { scores: s, top: top, max: max };
+  }
+
+  /* ================= 결과 ================= */
+  function finish() {
+    show('result');
+    $('loading').hidden = false;
+    $('preview').hidden = true;
+    $('saveBtn').disabled = true;
+    $('hint').classList.remove('strong');
+    resultBlob = null;
+
+    var r = score();
+    drawResult(r).then(function (canvas) {
+      var url = canvas.toDataURL('image/png');
+      var img = $('preview');
+      img.src = url;
+      img.alt = '진단 결과 이미지: ' + r.top.map(function (L) { return LANGS[L].name; }).join(' · ');
+      img.hidden = false;
+      $('loading').hidden = true;
+      resultFileName = '사랑의언어_' + safeName(state.name || '결과') + '.png';
+      if (canvas.toBlob) {
+        canvas.toBlob(function (blob) {
+          resultBlob = blob || dataURLtoBlob(url);
+          $('saveBtn').disabled = false;
+        }, 'image/png');
+      } else {
+        resultBlob = dataURLtoBlob(url);
+        $('saveBtn').disabled = false;
+      }
+    });
+  }
+
+  function safeName(s) {
+    return s.replace(/[\\/:*?"<>|\s]+/g, '_').replace(/^_+|_+$/g, '') || '결과';
+  }
+
+  function dataURLtoBlob(url) {
+    var parts = url.split(','), bin = atob(parts[1]), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    return new Blob([arr], { type: 'image/png' });
+  }
+
+  /* ---------- 폰트 로드 대기 ---------- */
+  function waitFonts(text) {
+    if (!document.fonts || !document.fonts.load) return Promise.resolve();
+    // 한글 웹폰트는 unicode-range로 쪼개져 있으므로 실제 그릴 글자를 함께 넘긴다
+    var loads = [
+      document.fonts.load('700 124px "Gowun Batang"', text),
+      document.fonts.load('400 40px "Noto Sans KR"', text),
+      document.fonts.load('500 40px "Noto Sans KR"', text),
+      document.fonts.load('700 40px "Noto Sans KR"', text)
+    ].map(function (p) { return p.catch(function () {}); });
+    var timeout = new Promise(function (res) { setTimeout(res, 4000); });
+    return Promise.race([Promise.all(loads), timeout]).catch(function () {});
+  }
+
+  /* ---------- 캔버스 유틸 ---------- */
+  function rrect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    if (typeof ctx.roundRect === 'function') ctx.roundRect(x, y, w, h, r);
+    else ctx.rect(x, y, w, h);
+  }
+
+  // 단어 단위 줄바꿈 (한 단어가 너비보다 길면 글자 단위로 자름)
+  function wrapLines(ctx, text, maxW) {
+    var words = text.split(' '), lines = [], cur = '';
+    words.forEach(function (w) {
+      var test = cur ? cur + ' ' + w : w;
+      if (ctx.measureText(test).width <= maxW) { cur = test; return; }
+      if (cur) lines.push(cur);
+      if (ctx.measureText(w).width <= maxW) { cur = w; return; }
+      cur = '';
+      Array.from(w).forEach(function (ch) {
+        if (ctx.measureText(cur + ch).width > maxW && cur) { lines.push(cur); cur = ch; }
+        else cur += ch;
+      });
+    });
+    if (cur) lines.push(cur);
+    return lines;
+  }
+
+  function drawLines(ctx, lines, x, y, lh) {
+    lines.forEach(function (l, i) { ctx.fillText(l, x, y + i * lh); });
+    return y + (lines.length - 1) * lh;
+  }
+
+  var SANS = '"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif';
+  var SERIF = '"Gowun Batang", "AppleMyungjo", "Batang", serif';
+
+  function drawResult(r) {
+    var W = 1080, H = 1350, TOP = 790, X = 80, MAXW = 920;
+    var tie = r.top.length > 1;
+    var main = LANGS[r.top[0]];
+    var title = state.name ? state.name + ' 님의 사랑의 언어' : '나의 사랑의 언어';
+    var bigName = r.top.map(function (L) { return LANGS[L].name; }).join(' · ');
+    var sub = tie ? '두 가지 이상의 언어가 비슷하게 높아요' : main.en;
+    var desc = tie
+      ? r.top.map(function (L) { return LANGS[L].name; }).join(', ') + '에서 고루 마음을 느끼는 사람이에요.'
+      : main.desc;
+    var tip = '이렇게 표현해 주면 좋아요: ' + (tie
+      ? r.top.slice(0, 2).map(function (L) { return LANGS[L].tip; }).join(' ')
+      : main.tip);
+    var heading = '다섯 가지 언어 점수';
+    var footer = '5가지 사랑의 언어 자가진단 · 게리 채프먼의 개념을 바탕으로 한 자체 문항 (각 8점 만점)';
+    var allText = [title, bigName, sub, desc, tip, heading, footer, '0123456789점']
+      .concat(ORDER.map(function (L) { return LANGS[L].name; })).join('');
+
+    return waitFonts(allText).then(function () {
+      var cv = document.createElement('canvas');
+      cv.width = W; cv.height = H;
+      var ctx = cv.getContext('2d');
+      ctx.textBaseline = 'alphabetic';
+
+      // 위쪽: 주 언어 색
+      ctx.fillStyle = main.color;
+      ctx.fillRect(0, 0, W, TOP);
+      // 장식 원
+      ctx.fillStyle = 'rgba(255,255,255,0.13)';
+      ctx.beginPath(); ctx.arc(960, 110, 250, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      ctx.beginPath(); ctx.arc(820, 40, 120, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'left';
+
+      // 1행
+      ctx.font = '500 40px ' + SANS;
+      ctx.globalAlpha = 0.92;
+      ctx.fillText(title, X, 150);
+      ctx.globalAlpha = 1;
+
+      // 주 언어 이름 (동점이면 96px, 너무 길면 줄여서 맞춤)
+      var size = tie ? 96 : 124;
+      ctx.font = '700 ' + size + 'px ' + SERIF;
+      while (ctx.measureText(bigName).width > MAXW && size > 72) {
+        size -= 4; ctx.font = '700 ' + size + 'px ' + SERIF;
+      }
+      // 이름 단위로 줄바꿈해서 '·'가 줄 끝에 남지 않게 한다
+      var nameLines = [], curLine = '';
+      r.top.forEach(function (L) {
+        var nm = LANGS[L].name;
+        var test = curLine ? curLine + ' · ' + nm : nm;
+        if (!curLine || ctx.measureText(test).width <= MAXW) curLine = test;
+        else { nameLines.push(curLine); curLine = '· ' + nm; }
+      });
+      nameLines.push(curLine);
+      var y = 150 + 40 + size;
+      y = drawLines(ctx, nameLines, X, y, Math.round(size * 1.15));
+
+      // 영문 / 동점 안내
+      ctx.font = '400 34px ' + SANS;
+      ctx.globalAlpha = 0.88;
+      y += tie ? 58 : 64;
+      ctx.fillText(sub, X, y);
+      ctx.globalAlpha = 1;
+
+      // 구분선
+      y += tie ? 40 : 50;
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.fillRect(X, y, 64, 4);
+      ctx.fillStyle = '#ffffff';
+
+      // 한 줄 설명
+      ctx.font = '500 46px ' + SANS;
+      y += tie ? 72 : 82;
+      y = drawLines(ctx, wrapLines(ctx, desc, MAXW), X, y, 64);
+
+      // 팁 (동점이면 글이 길어져 조금 작게)
+      ctx.font = '400 ' + (tie ? 31 : 34) + 'px ' + SANS;
+      ctx.globalAlpha = 0.92;
+      y += tie ? 62 : 72;
+      drawLines(ctx, wrapLines(ctx, tip, MAXW), X, y, tie ? 45 : 50);
+      ctx.globalAlpha = 1;
+
+      // 아래쪽 바탕
+      ctx.fillStyle = '#fbf7f2';
+      ctx.fillRect(0, TOP, W, H - TOP);
+
+      ctx.fillStyle = '#2a2420';
+      ctx.font = '700 40px ' + SANS;
+      ctx.fillText(heading, X, TOP + 84);
+
+      // 점수 막대
+      var rowY = TOP + 152, rowH = 68;
+      var barX = 340, barW = 560, barH = 22, scoreX = W - X;
+      ORDER.forEach(function (L, i) {
+        var lg = LANGS[L], v = r.scores[L], isTop = r.top.indexOf(L) !== -1;
+        var cy = rowY + i * rowH;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = isTop ? '#2a2420' : '#5f544b';
+        ctx.font = (isTop ? '700 ' : '400 ') + '34px ' + SANS;
+        ctx.fillText(lg.name, X, cy + 12);
+
+        ctx.fillStyle = '#ebe2d7';
+        rrect(ctx, barX, cy - barH / 2, barW, barH, barH / 2); ctx.fill();
+        if (v > 0) {
+          var w = Math.max(barH, barW * v / 8);
+          ctx.fillStyle = lg.color;
+          rrect(ctx, barX, cy - barH / 2, w, barH, barH / 2); ctx.fill();
+        }
+
+        ctx.textAlign = 'right';
+        ctx.fillStyle = isTop ? '#2a2420' : '#5f544b';
+        ctx.font = (isTop ? '700 ' : '500 ') + '34px ' + SANS;
+        ctx.fillText(v + '점', scoreX, cy + 12);
+      });
+
+      // 출처
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#8a7d71';
+      ctx.font = '400 24px ' + SANS;
+      var fl = wrapLines(ctx, footer, MAXW);
+      var fy = H - 40 - (fl.length - 1) * 34;
+      drawLines(ctx, fl, W / 2, fy, 34);
+
+      return cv;
+    });
+  }
+
+  /* ================= 저장 ================= */
+  function emphasizeHint() {
+    var h = $('hint');
+    h.textContent = "이미지를 길게 눌러 '사진에 저장'을 선택하세요.";
+    h.classList.add('strong');
+    h.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  function download(blob, name) {
+    if (!('download' in document.createElement('a')) || !window.URL || !URL.createObjectURL) return false;
+    try {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url; a.download = name; a.rel = 'noopener';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      return true;
+    } catch (e) { return false; }
+  }
+
+  $('saveBtn').addEventListener('click', function () {
+    if (!resultBlob) return;
+    var file = null;
+    try { file = new File([resultBlob], resultFileName, { type: 'image/png' }); } catch (e) { file = null; }
+
+    if (file && navigator.canShare && navigator.share) {
+      var ok = false;
+      try { ok = navigator.canShare({ files: [file] }); } catch (e) { ok = false; }
+      if (ok) {
+        navigator.share({ files: [file], title: '나의 사랑의 언어' }).catch(function (err) {
+          if (err && err.name === 'AbortError') return; // 사용자가 취소함
+          if (!download(resultBlob, resultFileName)) emphasizeHint();
+        });
+        return;
+      }
+    }
+    if (!download(resultBlob, resultFileName)) emphasizeHint();
+  });
+
+  $('retryBtn').addEventListener('click', function () {
+    state.idx = 0;
+    state.answers = new Array(20).fill(null);
+    var h = $('hint');
+    h.textContent = "저장 버튼이 안 되면 이미지를 길게 눌러 '사진에 저장'을 선택하세요.";
+    h.classList.remove('strong');
+    show('start');
+  });
+
+  /* ================= 초기화 ================= */
+  buildHero();
+  buildChips();
+
+  // 테스트용 훅 (콘솔에서 확인 가능)
+  window.__loveLang = { QUESTIONS: QUESTIONS, state: state, score: score };
+})();
+</script>
+</body>
+</html>
